@@ -1,0 +1,415 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int move(char *world) {
+    int robot, width, target, robot_x, robot_y,  target_x, target_y ;
+      int east = 3;
+       int west = 2;
+        int north= 9;
+         int south = 7;
+ 
+   for (int i = 0; i < 199; i++)  // nextMove is counted as = 1;
+     {
+        if (world[i] == '\n')
+        {
+            width = i+1;
+            break;
+        }
+    }
+    for (int i = 0; i < 199; i++)
+    {
+        if (world[i] == 'R') 
+        {
+            robot = i;
+            break;
+        }
+    }
+    for(int i = 0; i < 199; i++)
+    {
+        if (world[i] == 'T') 
+        {
+            target = i;
+            break;
+        }
+    }
+    
+    robot_y = robot / width; // robot postion in x ,y axis
+    robot_x = robot % width;
+    
+    target_y = target / width;
+    target_x = target % width;    //positiond target
+
+    if(world[(robot_y - 1) * width + robot_x] == 'T') //robot next position
+        return north;
+    if(world[(robot_y + 1) * width + robot_x] == 'T')
+        return south;
+    if(world[robot_y * width + robot_x - 1] == 'T')
+        return east;
+    if(world[robot_y * width + robot_x + 1] == 'T')
+        return west;
+        
+  
+    int goingup, goingdown, goingleft, goingright;       // Area scanning 
+    goingup = (world[(robot_y - 1) * width + robot_x] == '#' ? 0 : 1 );
+    goingdown = (world[(robot_y + 1) * width + robot_x] == '#'? 0 : 1);
+    goingleft = (world[robot_y * width + robot_x - 1] == '#' ? 0 : 1);
+    goingright = (world[robot_y * width + robot_x + 1] == '#' ? 0 : 1);
+    
+    int moves[199];
+     int whenup = 199;
+      int whendown = 199;
+       int whenleft = 199; 
+        int whenright = 199;
+    
+
+    if(goingdown == 1)   //  going down
+    {
+        int countmoves; 
+         int allmoves = 1;    
+
+        for (int i = 0; i <= 199; i++)
+        {
+            moves[i] = 0;
+        }
+        moves[(robot_y + 1) * width + robot_x] = 1;  //First move=1
+        
+        countmoves = 1;
+        int targetFound = 0;
+        while((countmoves != 0) && (targetFound == 0))
+        {
+            countmoves = 0;   //new moves
+            for(int i = 0; i <= 199; i++)
+            {
+                int x = 0;
+                 int y = 0;
+                if(moves[i] == allmoves)
+                {
+                   
+                    y = i / width;
+                    x = i % width;   // count moves for differnt places
+                    if((world[(y - 1) * width + x] == 'T') || (world[(y + 1) * width + x] == 'T') ||
+                        (world[y * width + x + 1] == 'T') || (world[y * width + x - 1] == 'T'))
+                    {
+                        targetFound = 1;
+                        break;
+                    }
+                    if((world[(y - 1) * width + x] != '#') && (moves[(y - 1) * width + x] == 0))
+                    {
+                        moves[(y - 1) * width + x] = allmoves + 1;
+                        countmoves++;
+                    }
+                    if((world[(y + 1) * width + x] != '#') && (moves[(y + 1) * width + x] == 0))
+                    {
+                        moves[(y + 1) * width + x] = allmoves + 1;
+                        countmoves++;
+                    }
+                    if((world[y * width + x + 1] != '#') && (moves[y * width + x + 1] == 0))
+                    {
+                        moves[y * width + x + 1] = allmoves + 1;
+                        countmoves++;
+                    }
+                    if((world[y * width + x - 1] != '#') && (moves[y * width + x - 1] == 0))
+                    {
+                        moves[y * width + x - 1] = allmoves + 1;
+                        countmoves++;
+                    }
+                }
+            }
+            if (countmoves != 0)
+               {
+                allmoves++;
+            }
+        }
+        whendown = allmoves;
+    }
+
+    if(goingup == 1)    //going up  
+    {
+        int countmoves;
+         int allmoves = 1;     
+
+        for (int i = 0; i <= 199; i++)
+        {
+            moves[i] = 0;
+        }
+        moves[(robot_y - 1) * width + robot_x] = 1;  
+
+        countmoves = 1;
+        int targetFound = 0;
+        while((countmoves != 0) && (targetFound == 0))
+        {
+            countmoves = 0;  
+            for(int i = 0; i <= 199; i++)
+            {
+                int x = 0;
+                 int y = 0;
+                  if(moves[i] == allmoves)     // moves to different positions
+                  {
+                     y = i / width;
+                     x = i % width;
+                    if((world[(y - 1) * width + x] == 'T') || (world[(y + 1) * width + x] == 'T') ||
+                        (world[y * width + x + 1] == 'T') || (world[y * width + x - 1] == 'T'))
+                    {
+                        targetFound = 1;
+                        break;
+                    }
+                    if((world[(y - 1) * width + x] != '#') && (moves[(y - 1) * width + x] == 0))  
+                    {
+                        moves[(y - 1) * width + x] = allmoves + 1;
+                        countmoves++;
+                    }
+                    if((world[(y + 1) * width + x] != '#') && (moves[(y + 1) * width + x] == 0))
+                    {
+                        moves[(y + 1) * width + x] = allmoves + 1;
+                        countmoves++;
+                    }
+                    if((world[y * width + x + 1] != '#') && (moves[y * width + x + 1] == 0))
+                    {
+                        moves[y * width + x + 1] = allmoves + 1;
+                        countmoves++;
+                    }
+                    if((world[y * width + x - 1] != '#') && (moves[y * width + x - 1] == 0))
+                    {
+                        moves[y * width + x - 1] = allmoves + 1;
+                        countmoves++;
+                    }
+                }
+            }
+            if (countmoves != 0)
+               {
+                allmoves++;
+            }
+        }
+        whenup = allmoves;
+    }
+
+
+    if(goingleft == 1)      //going left
+  
+    {
+        int countmoves;
+         int allmoves = 1;     
+          for (int i = 0; i <= 199; i++)
+        {
+            moves[i] = 0;
+        }
+        moves[robot_y * width + robot_x - 1] = 1;  
+        countmoves = 1;
+        int targetFound = 0;
+        while((countmoves != 0) && (targetFound == 0))
+        {
+            countmoves = 0;  
+            for(int i = 0; i <= 199; i++)
+            {
+                int x = 0;
+                int y = 0;
+                if(moves[i] == allmoves)
+                {
+                    y = i / width;
+                    x = i % width;
+                    if((world[(y - 1) * width + x] == 'T') || (world[(y + 1) * width + x] == 'T') ||
+                        (world[y * width + x + 1] == 'T') || (world[y * width + x - 1] == 'T'))
+                    {
+                        targetFound = 1;
+                        break;
+                    }
+                    if((world[(y - 1) * width + x] != '#') && (moves[(y - 1) * width + x] == 0))
+                    {
+                        moves[(y - 1) * width + x] = allmoves + 1;
+                        countmoves++;
+                    }
+                    if((world[(y + 1) * width + x] != '#') && (moves[(y + 1) * width + x] == 0))
+                    {
+                        moves[(y + 1) * width + x] = allmoves + 1;
+                        countmoves++;
+                    }
+                    if((world[y * width + x + 1] != '#') && (moves[y * width + x + 1] == 0))
+                    {
+                        moves[y * width + x + 1] = allmoves + 1;
+                        countmoves++;
+                    }
+                    if((world[y * width + x - 1] != '#') && (moves[y * width + x - 1] == 0))
+                    {
+                        moves[y * width + x - 1] = allmoves + 1;
+                        countmoves++;
+                    }
+                }
+            }
+            if (countmoves != 0)
+               {
+                allmoves++;
+            }
+        }
+        whenleft = allmoves;
+    }
+    
+    if(goingright == 1)  // going right 
+    {
+        int countmoves;
+         int allmoves = 1;    
+
+        
+        for (int i = 0; i <= 199; i++)
+        {
+            moves[i] = 0;
+        }
+        moves[robot_y * width + robot_x + 1] = 1;  
+        countmoves = 1;
+        int targetFound = 0;
+        while((countmoves != 0) && (targetFound == 0))
+        {
+            countmoves = 0;  
+            for(int i = 0; i <= 199; i++)
+            {
+                int x = 0;
+                 int y = 0;
+                if(moves[i] == allmoves)
+                {
+                    y = i / width;
+                    x = i % width;
+                    if((world[(y - 1) * width + x] == 'T') || (world[(y + 1) * width + x] == 'T') ||
+                        (world[y * width + x + 1] == 'T') || (world[y * width + x - 1] == 'T'))
+                    {
+                        targetFound = 1;
+                        break;
+                    }
+                    
+                    if((world[(y - 1) * width + x] != '#') && (moves[(y - 1) * width + x] == 0))
+                    {
+                        moves[(y - 1) * width + x] = allmoves + 1;
+                        countmoves++;
+                    }
+                    if((world[(y + 1) * width + x] != '#') && (moves[(y + 1) * width + x] == 0))
+                    {
+                        moves[(y + 1) * width + x] = allmoves + 1;
+                        countmoves++;
+                    }
+                    if((world[y * width + x + 1] != '#') && (moves[y * width + x + 1] == 0))
+                    {
+                        moves[y * width + x + 1] = allmoves + 1;
+                        countmoves++;
+                    }
+                    if((world[y * width + x - 1] != '#') && (moves[y * width + x - 1] == 0))
+                    {
+                        moves[y * width + x - 1] = allmoves + 1;
+                        countmoves++;
+                    }
+                }
+            }
+            if (countmoves != 0)
+               {
+                allmoves++;
+            }
+        }
+        whenright = allmoves;
+    }
+
+   int bestRoute = 5;
+    if((whenup <= whendown) && (whenup <= whenleft) && (whenup <= whenright))
+        bestRoute = north;
+    else if((whendown <= whenleft) && (whendown <= whenright))
+        bestRoute = south;
+    else if(whenleft <= whenright)
+        bestRoute = east;
+    else
+        bestRoute = west;
+  
+    return bestRoute; 
+}
+
+int new_world(int position, char *world, int robot, int width) {  // target return
+    int target = 1;
+   
+    if(position == 9) {
+        target = robot-(width+1); // north
+    }
+   
+    else if(position == 7) {
+        target = robot+(width+1); // south
+    }
+    
+    else if(position == 2) {
+        target= robot+1;  // east
+    }
+   
+    else if(position == 3) {
+        target = robot-1;   // west
+    }
+    
+    if(world[target] == 'O') {
+        world[target] = 'R';
+        world[robot] = 'O';
+        return target;
+    }
+    else if(world[target] == '#') {
+        printf("%s", world);
+        printf("Error, crash into wall!");
+        exit(1);
+    }
+     else if(world[target] == 'T') {
+        world[target] = 'R';
+        world[robot] = 'O';
+        printf("%s", world);
+        printf("Match, Target found!");
+        exit(0);
+    }
+}
+
+    int main() {
+     int max_moves = 199;
+      int step = 1;
+       int width = 21;
+        int position;
+         int movement;
+                            //Environment
+    char world[199] = {
+        '#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','O','O','\n',
+        '#','O','O','#','O','O','O','O','O','O','O','O','O','O','O','O','O','O','#','O','O','\n',
+        '#','O','O','O','O','O','O','O','O','#','O','O','O','O','O','O','O','O','#','O','O','\n',
+        '#','O','O','O','#','#','#','#','#','#','O','O','R','O','#','#','#','O','#','O','O','\n',
+        '#','O','O','O','#','O','O','O','O','#','O','O','O','O','#','O','O','O','#','O','O','\n',
+        '#','T','O','O','#','O','O','O','O','#','O','O','O','O','#','O','O','O','O','O','O','\n',
+        '#','O','O','O','O','O','O','O','O','#','O','O','O','O','#','O','O','O','#','O','O','\n',
+        '#','O','O','O','#','O','O','O','O','#','O','O','O','O','O','O','O','O','#','O','O','\n',
+        '#','O','O','O','O','O','O','O','O','#','O','O','O','O','O','O','O','O','#','O','O','\n',
+    };      
+ 
+    int members = sizeof(world)/sizeof(world[0]);
+     int robot;
+      int target;
+    
+    for(int i = 0; i < members; i++) {
+    if (world[i] == 'R') {
+            robot = i;
+            break;
+        }
+    }
+    for(int i = 0; i < members; i++) {
+    if (world[i] == 'T') {
+            target = i;
+            break;
+        }
+    }
+
+    printf("initial position: %c", '\n');
+    
+    printf("%s", world);  
+    printf("%c", '\n');
+    printf("%s", world);
+    printf("%c", '\n');
+    
+    while(step <= max_moves) {
+        printf("step number %i: %c", step, '\n');
+
+        movement = move(world);
+        robot = new_world(movement, world, robot, width);
+        printf("%s", world);
+        //printf("%c", '\n');
+        step = step+1;
+    }
+    if(step >= max_moves) {
+        printf("fail, cross the limited moves.");
+    }
+    
+}
+
